@@ -19,7 +19,7 @@ const (
 
 func main() {
 	queryFlag := flag.String("w", "", "Search query")
-	nFlag := flag.Int("n", NO_OF_RESULTS, "Number of results to be displayed")
+	nFlag := flag.Uint("n", NO_OF_RESULTS, "Number of results to be displayed")
 	listSoundsFlag := flag.Bool("s", false, "List sound files instead")
 	flag.Parse()
 
@@ -38,34 +38,37 @@ func main() {
 		log.Println(err)
 	}
 
-	var l int
 	if *listSoundsFlag {
-		l = len(res.Sounds)
-		displaySoundFiles(res.Sounds, *nFlag)
+		if len(res.Sounds) == 0 {
+			fmt.Println("Sorry, no sounds found")
+			return
+		}
+		displaySoundFiles(res.Sounds)
 	} else {
-		l = len(res.Results)
+		l := len(res.Results)
+		if l == 0 {
+			fmt.Println("Sorry, no results found")
+			return
+		}
 		displayDefinitions(res.Results, *nFlag)
 		if DISPLAY_FOOTER {
 			fmt.Println(strings.Repeat("#", WRAP_WIDTH))
-			fmt.Printf("Results Fetched: %d, Displayed: %d\n", l, min(l, *nFlag))
+			fmt.Printf("Results Fetched: %d, Displayed: %d\n", l, min(l, int(*nFlag)))
 		}
 	}
 }
 
-func displaySoundFiles(sounds []string, n int) {
-	for i, s := range sounds {
-		if i >= n {
-			break
-		}
+func displaySoundFiles(sounds []string) {
+	for _, s := range sounds {
 		fmt.Println(s)
 	}
 }
 
-func displayDefinitions(r []ud.Result, n int) {
+func displayDefinitions(r []ud.Result, n uint) {
 	// width
 	var w uint = 80
 	for i, d := range r {
-		if i >= n {
+		if i >= int(n) {
 			break
 		}
 		fmt.Println(strings.Repeat("#", WRAP_WIDTH))
