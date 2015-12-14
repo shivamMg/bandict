@@ -11,9 +11,15 @@ import (
 	"strings"
 )
 
+const (
+	NO_OF_RESULTS  = 1
+	WRAP_WIDTH     = 80
+	DISPLAY_FOOTER = true
+)
+
 func main() {
 	queryFlag := flag.String("w", "", "Search query")
-	nFlag := flag.Int("n", 1, "Number of results to be displayed")
+	nFlag := flag.Int("n", NO_OF_RESULTS, "Number of results to be displayed")
 	listSoundsFlag := flag.Bool("s", false, "List sound files instead")
 	flag.Parse()
 
@@ -32,10 +38,17 @@ func main() {
 		log.Println(err)
 	}
 
+	var l int
 	if *listSoundsFlag {
+		l = len(res.Sounds)
 		displaySoundFiles(res.Sounds, *nFlag)
 	} else {
+		l = len(res.Results)
 		displayDefinitions(res.Results, *nFlag)
+		if DISPLAY_FOOTER {
+			fmt.Println(strings.Repeat("#", WRAP_WIDTH))
+			fmt.Printf("Results Fetched: %d, Displayed: %d\n", l, min(l, *nFlag))
+		}
 	}
 }
 
@@ -55,12 +68,20 @@ func displayDefinitions(r []ud.Result, n int) {
 		if i >= n {
 			break
 		}
-		fmt.Println(strings.Repeat("#", int(w)))
+		fmt.Println(strings.Repeat("#", WRAP_WIDTH))
 		fmt.Println(d.Word)
 		fmt.Printf("+1: %d\n", d.Upvote)
 		fmt.Printf("-1: %d\n", d.Downvote)
 		fmt.Println(wordwrap.WrapString(d.Definition, w))
 		fmt.Println()
 		fmt.Println(wordwrap.WrapString(d.Example, w))
+	}
+}
+
+func min(x int, y int) int {
+	if x >= y {
+		return y
+	} else {
+		return x
 	}
 }
