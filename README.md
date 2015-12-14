@@ -1,6 +1,24 @@
 ## bandict
 
-Command-line [urbanDictionary](https://www.urbandictionary.com/) Search
+Command-line [Urban Dictionary](https://www.urbandictionary.com/) Search in Go
+
+
+### Install
+
+**bandict** requires Go. You can download it from [here](https://golang.org/dl/).
+
+Run the following command:
+
+```bash
+$ go get github.com/shivammg/bandict
+```
+
+Make sure you have `$GOPATH/bin` in your `$PATH`. If you don't, you can add it in your shell configuration file:
+
+```bash
+PATH="$PATH:$GOPATH/bin"
+```
+
 
 ### Change Preferences
 
@@ -53,6 +71,7 @@ Use the command to download the first file:
 ```bash
 $ wget $(bandict -w 'lmao' -s | sed -n 1p)
 ```
+
 
 ### License
 
